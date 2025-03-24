@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punjab House Price Predictor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 600px; margin-top: 50px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+        .btn-primary { width: 100%; }
+        .result { margin-top: 20px; font-size: 20px; font-weight: bold; color: green; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Punjab House Price Predictor</h2>
+        <form id="predictionForm">
+            <label for="district">District:</label>
+            <select class="form-control" id="district" name="district">
+                <option value="NA">NA</option>
+                {% for d in districts %}
+                    <option value="{{ d }}">{{ d }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Area (sqft):</label>
+            <input type="number" class="form-control" name="area" required>
+
+            <label>Bedrooms:</label>
+            <input type="number" class="form-control" name="bedrooms" required>
+
+            <label>Bathrooms:</label>
+            <input type="number" class="form-control" name="bathrooms" required>
+
+            <label>Stories:</label>
+            <input type="number" class="form-control" name="stories" required>
+
+            <label>Main Road:</label>
+            <select class="form-control" name="mainroad">
+                <option value="NA">NA</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label>Guest Room:</label>
+            <select class="form-control" name="guestroom">
+                <option value="NA">NA</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label>Basement:</label>
+            <select class="form-control" name="basement">
+                <option value="NA">NA</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label>Hot Water Heating:</label>
+            <select class="form-control" name="hotwater">
+                <option value="NA">NA</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label>Air Conditioning:</label>
+            <select class="form-control" name="aircon">
+                <option value="NA">NA</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label>Parking Spaces:</label>
+            <input type="number" class="form-control" name="parking" required>
+
+            <label>Preferred Area:</label>
+            <select class="form-control" name="prefarea">
+                <option value="NA">NA</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <label>Furnishing Status:</label>
+            <select class="form-control" name="furnishing">
+                <option value="NA">NA</option>
+                <option value="Furnished">Furnished</option>
+                <option value="Semi-Furnished">Semi-Furnished</option>
+                <option value="Unfurnished">Unfurnished</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary mt-3">Predict Price</button>
+        </form>
+
+        <div class="result mt-3" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').onsubmit = function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result').innerHTML = `<span style="color: red;">${data.error}</span>`;
+                } else {
+                    document.getElementById('result').innerHTML = `Predicted Price: ₹${data.price}`;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        };
+    </script>
+</body>
+</html>
